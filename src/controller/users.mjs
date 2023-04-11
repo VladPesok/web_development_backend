@@ -1,37 +1,40 @@
-import express from 'express';
-import { getUser, saveUser, getAllUsers } from '../services/users.mjs';
+import bcrypt from 'bcrypt';
+import { getUser as getUserByName, saveUser, getAllUsers } from '../services/users.mjs';
 
-const router = express.Router();
 
-// getUser
-router.get('/:name', async (req, res) => {
-  const { name } = req.params;
-  
-  const result = await getUser(req.params.name);
-  res.status(200).json(result);
-})
+const getUser = async (name) => {
+  const result = await getUserByName(name);
+  return result;
+}
 
-// getAllUser
-router.get('/', async (req, res) => {
+const getUsers = async () => {
   const results = await getAllUsers();
-  res.status(200).json(results);
-});
+  return results;
+}
 
-// saveUser
-router.post('/', async (req, res) => {
-  const user = req.body;
-
-  const existingUser = getUser(user.name);
+const createUser = async (body) => {
+  const existingUser = await getUserByName(body.name);
 
   if(existingUser){
     return res.status(400).send('User already exists!');
   }
 
-  user.createDate = Date.now();
-  
+  const user = {
+    name: body.name,
+    email: body.email,
+    passwordHash: bcrypt.hashSync(body.password, 8),
+    createDate: Date.now()
+  }
+
   const result = await saveUser(user);
 
-  res.status(200).json(result);
-})
+  return result;
+}
 
-export default router;
+export {
+  getUser,
+  getUsers,
+  createUser
+}
+
+
