@@ -15,7 +15,6 @@ const extractToken = (req) => {
 
 const authenticate = (req, res, next) => {
     const token = extractToken(req);
-    console.log(token)
     try {
         jwt.verify(token, config.JWT_SECRET);
         next();
