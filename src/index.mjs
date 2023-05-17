@@ -4,9 +4,12 @@ import config from './config/config.mjs';
 import userRouter from './router/users.mjs';
 import authRouter from './router/auth.mjs';
 import propertiesRouter from './router/properties.mjs';
+import cors from 'cors';
 
 const app = express()
 const port = config.PORT;
+
+app.use(cors());
 
 // parse application/json
 app.use(bodyParser.json());
